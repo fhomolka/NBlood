@@ -345,9 +345,15 @@ void processinput(Player* plr)
     static short tempsectornum;
     short onground;
 
+    int32_t tics;
+
     a = angvel;
     s = svel;
     v = vel;
+
+    // char buf[100];
+   //  sprintf(buf, "vel: %d\n", v);
+   //  OutputDebugString(buf);
 
     ControlInfo info;
     CONTROL_ProcessBinds();
@@ -480,16 +486,11 @@ void processinput(Player* plr)
         setbrightness(brightness);
     }
 
-    if (v < -MAX_MOVEMENT_VELOCITY) v = -MAX_MOVEMENT_VELOCITY;
-    else if (v > MAX_MOVEMENT_VELOCITY) v = MAX_MOVEMENT_VELOCITY;
-
+    v = clamp(v, -MAX_MOVEMENT_VELOCITY, MAX_MOVEMENT_VELOCITY);
     v += v >> 1;// SUPER MARIO BROTHERS
 
-    if (s < -MAX_MOVEMENT_VELOCITY) s = -MAX_MOVEMENT_VELOCITY; // Yes, this is strafing, however, original code compares it against 201
-    else if (s > MAX_MOVEMENT_VELOCITY) s = MAX_MOVEMENT_VELOCITY;
-
-    if (a < -112) a = -112; //fhomolka 18/02/2021: I have no clue why it's 112 here, but 127 elsewhere
-    else if (a > 112) a = 112;
+    s = clamp(s, -MAX_MOVEMENT_VELOCITY, MAX_MOVEMENT_VELOCITY); // Yes, this is strafing, however, original code compares it against 201
+    a = clamp(a, -112, 112); //fhomolka 18/02/2021: I have no clue why it's 112 here, but 127 elsewhere
 
     int i = 0;
 
@@ -507,8 +508,7 @@ void processinput(Player* plr)
             i += (mousx * mousxspeed);
         }
 
-        if (i < -MAX_STRAFE_VELOCITY - 1) i = -MAX_STRAFE_VELOCITY - 1; // original says -128
-        if (i > MAX_STRAFE_VELOCITY) i = MAX_STRAFE_VELOCITY;
+        i = clamp(i, -MAX_STRAFE_VELOCITY - 1, MAX_STRAFE_VELOCITY); // original says -128
 
         if (BUTTON(gamefunc_Strafe))
             s = i;
@@ -531,14 +531,7 @@ void processinput(Player* plr)
             i = v;
 
             i -= (mousy * mousyspeed);
-            if (i < -MAX_MOUSE_MOVEMENT_VELOCITY - 1) //fhomolka 18/02/2021: I have no clue why it's 128 here, but 201 elsewhere
-            {
-                i = -MAX_MOUSE_MOVEMENT_VELOCITY - 1;
-            }
-            else if (i > MAX_MOUSE_MOVEMENT_VELOCITY)
-            {
-                i = MAX_MOUSE_MOVEMENT_VELOCITY;
-            }
+            i = clamp(i, -MAX_MOUSE_MOVEMENT_VELOCITY - 1, MAX_MOUSE_MOVEMENT_VELOCITY); //fhomolka 18/02/2021: I have no clue why it's 128 here, but 201 elsewhere
             v = i;
         }
 
@@ -581,19 +574,20 @@ void processinput(Player* plr)
         oldbstatus = bstatus;
     }
 
- //   i = (int)totalclock - lockclock;
-/*
+    i = (int)totalclock - lockclock;
     if (i > 255)
         i = 255;
-*/
-    //synctics = tics = i;
 
-    int32_t tics = kTicksPerFrame;
+    // TEMP synctics = tics = i;
+    tics = i;
 
-    lockclock += kTicksPerFrame;//synctics;
+    //int32_t tics = kTicksPerFrame;
+
+    //lockclock += kTicksPerFrame;//synctics;
+    lockclock += synctics;
 
     // TEMP
-    synctics = 4;
+    //synctics = 4;
 
     sprite[plr->spritenum].cstat ^= 1;
 
@@ -720,6 +714,7 @@ void processinput(Player* plr)
         && plr->z >= sector[plr->sector].floorz - (plr->height << 8) - (8 << 8))
     {
         goalz = loz - (32 << 8);
+
         switch (sector[plr->sector].floorpicnum)
         {
             case ANILAVA:
@@ -732,8 +727,9 @@ void processinput(Player* plr)
                     goalz = loz - (PLAYERHEIGHT << 8);
                     break;
                 }
-                else
+                else{
                     v -= v >> 3;
+                }
 
                 if (plr->invincibletime > 0 || plr->manatime > 0)
                     break;
@@ -754,8 +750,7 @@ void processinput(Player* plr)
                 {
                     goalz = loz - (PLAYERHEIGHT << 8);
                 }
-                else
-                {
+                else{
                     v -= v >> 3;
                 }
             }
@@ -962,7 +957,8 @@ void processinput(Player* plr)
             yvect += (s * tics * Sin(plr->ang + 1536)) >> 3;
         }
 
-        oldposx = plr->x; oldposy = plr->y;
+        oldposx = plr->x; 
+        oldposy = plr->y;
 
         clipmove_old(&plr->x, &plr->y, &plr->z, &plr->sector, xvect, yvect, 128, 4 << 8, 4 << 8, CLIPMASK0);
 
@@ -1095,9 +1091,9 @@ void processinput(Player* plr)
         }
 
         if (vel > 199 || vel < -199 && dist > 10)
-            runningtime += kTimerTicks; // synctics;
+            runningtime += kTicksPerFrame; // synctics;
         else
-            runningtime -= kTimerTicks; //synctics;
+            runningtime -= kTicksPerFrame; //synctics;
 
         if (runningtime < -360)
             runningtime = 0;

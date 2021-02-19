@@ -1204,7 +1204,7 @@ void loadplayerstuff()
 
     read(fh, &totalclock, sizeof(totalclock));
     read(fh, &lockclock, sizeof(lockclock));
-	read(fh, &synctics, sizeof(synctics));
+// TODO    read(fh, &synctics, sizeof(synctics));
 
     // Warning: only works if all pointers are in sector structures!
     read(fh, tmpanimateptr, MAXANIMATES << 2);

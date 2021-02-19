@@ -163,7 +163,7 @@ int32_t getanimationgoal(int32_t* animptr);
 void setdelayfunc(void (*func)(int), int item, int delay);
 void intro();
 
-extern int32_t synctics;
+extern const int32_t synctics;
 extern int32_t globhiz, globloz, globhihit, globlohit;
 extern char option[];
 

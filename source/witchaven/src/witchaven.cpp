@@ -67,7 +67,7 @@ void app_crashhandler(void)
 
 void InstallEngine();
 
-int32_t synctics;
+const int32_t synctics = kTicksPerFrame;
 int32_t globhiz, globloz, globhihit, globlohit;
 
 char option[NUMOPTIONS] = { 0,0,0,0,0,0,1,0 };
@@ -105,7 +105,7 @@ extern int32_t cachecount, transarea;
 extern char chainstat;
 
 
-uint32_t flags32[32]={
+uint32_t flags32[32] = {
     0x80000000,0x40000000,0x20000000,0x10000000,
     0x08000000,0x04000000,0x02000000,0x01000000,
     0x00800000,0x00400000,0x00200000,0x00100000,
@@ -137,7 +137,7 @@ extern int digilevel;
 
 struct Delayitem delayitem[MAXSECTORS];
 
-int32_t brightness  = 0;
+int32_t brightness = 0;
 int32_t gbrightness = 0;
 
 int swingcnt;
@@ -173,8 +173,8 @@ short bobbingsectorlist[16], bobbingsectorcnt;
 
 int justteleported = 0;
 
-short ironbarsector[16],ironbarscnt;
-int ironbarsgoal1[16],ironbarsgoal2[16];
+short ironbarsector[16], ironbarscnt;
+int ironbarsgoal1[16], ironbarsgoal2[16];
 short ironbarsdone[16], ironbarsanim[16];
 int ironbarsgoal[16];
 
@@ -189,7 +189,7 @@ static int32_t nonsharedtimer;
 int adjusthp(int hp);
 void playloop();
 void readpalettetable();
-void drawoverheadmap(Player *plr);
+void drawoverheadmap(Player* plr);
 
 int32_t g_commandSetup = 0;
 int32_t g_noSetup = 0;
@@ -420,11 +420,11 @@ void faketimerhandler(void)
 //   basic text functions
 //
 
-void cls80x25(int top,int mid,int bot)
+void cls80x25(int top, int mid, int bot)
 {
 }
 
-void tprintf(int x, int y, const char *fmt,...)
+void tprintf(int x, int y, const char* fmt,...)
 {
 }
 
@@ -432,7 +432,7 @@ void rp_delay(int goal)
 {
     bool bExit = false;
 
-    int32_t dagoal = (int)totalclock+goal;
+    int32_t dagoal = (int)totalclock + goal;
 
     while (!bExit)
     {
@@ -459,7 +459,7 @@ void shutdown()
     CONFIG_WriteSetup(0);
 
 #if 0
-    int fil = open("pref.dat", O_BINARY|O_TRUNC|O_CREAT|O_WRONLY, S_IREAD | S_IWRITE);
+    int fil = open("pref.dat", O_BINARY | O_TRUNC | O_CREAT | O_WRONLY, S_IREAD | S_IWRITE);
     if (fil != NULL)
     {
         write(fil, &goreon, 2);
@@ -474,18 +474,18 @@ void shutdown()
 
     SND_Shutdown();
 
-//TODO   netshutdown();
+    //TODO   netshutdown();
 
-//    if (engineinitflag) {
+    //    if (engineinitflag) {
         engineUnInit();
-//    }
+    //    }
 
     if (SoundMode) {
-//TODO        SND_UnDoBuffers();
+    //TODO        SND_UnDoBuffers();
     }
 
     if (videoinitflag) {
-// TODO        setvmode(oldvmode);
+    // TODO        setvmode(oldvmode);
     }
 
     //CHECKME uninitkeys();
@@ -537,7 +537,7 @@ void doanimations(int32_t numtics)
     }
 }
 
-int32_t getanimationgoal(int32_t *animptr)
+int32_t getanimationgoal(int32_t* animptr)
 {
     int j = -1;
     for (int i = 0; i < animatecnt; i++)
@@ -552,9 +552,9 @@ int32_t getanimationgoal(int32_t *animptr)
     return j;
 }
 
-int32_t setanimation(int32_t*animptr, int32_t thegoal, int32_t thevel)
+int32_t setanimation(int32_t* animptr, int32_t thegoal, int32_t thevel)
 {
-    if (animatecnt >= MAXANIMATES-1) {
+    if (animatecnt >= MAXANIMATES - 1) {
         return(-1);
     }
 
@@ -569,9 +569,9 @@ int32_t setanimation(int32_t*animptr, int32_t thegoal, int32_t thevel)
         }
     }
 
-    animateptr[j]  = animptr;
+    animateptr[j] = animptr;
     animategoal[j] = thegoal;
-    animatevel[j]  = thevel;
+    animatevel[j] = thevel;
 
     if (j == animatecnt) {
         animatecnt++;
@@ -580,7 +580,7 @@ int32_t setanimation(int32_t*animptr, int32_t thegoal, int32_t thevel)
     return animatecnt - 1;
 }
 
-void setdelayfunc(void (*func)(int),int item,int delay)
+void setdelayfunc(void (*func)(int), int item, int delay)
 {
     for (int i = 0; i < delaycnt; i++)
     {
@@ -632,7 +632,7 @@ void setup3dscreen()
 {
     int32_t dax, day, dax2, day2;
 
-    Player *plr = &player[pyrn];
+    Player* plr = &player[pyrn];
 
     videoSetGameMode(gSetup.fullscreen, gSetup.xdim, gSetup.ydim, gSetup.bpp, 0);
 
@@ -1237,14 +1237,14 @@ void setupboard(char* fname)
             revolvecnt++;
         }
 
-        switch (sector[i].lotag) 
+        switch (sector[i].lotag)
         {
             case DOORSWINGTAG:
             startwall = sector[i].wallptr;
             endwall = startwall + sector[i].wallnum - 1;
             for (j = startwall; j <= endwall; j++)
             {
-                if (wall[j].lotag == 4) 
+                if (wall[j].lotag == 4)
                 {
                     k = wall[wall[wall[wall[j].point2].point2].point2].point2;
                     if ((wall[j].x == wall[k].x) && (wall[j].y == wall[k].y)) {
@@ -1447,7 +1447,7 @@ void drawscreen(Player* plr)
     }
 
     DrawHUD();
-    
+
     //updatepics();
 
     G_PrintFPS();
@@ -1796,7 +1796,7 @@ void intro()
 
     for (int i = 0; i < 32; i++)
     {
-        overwritesprite(0,0,TITLEPIC,32-i,2,0);
+        overwritesprite(0, 0, TITLEPIC, 32 - i, 2, 0);
         videoNextPage();
     }
 
@@ -1804,7 +1804,7 @@ void intro()
 
     for (int i = 0; i < 32; i++)
     {
-        overwritesprite(0,0,TITLEPIC,i,2,0);
+        overwritesprite(0, 0, TITLEPIC, i, 2, 0);
         videoNextPage();
     }
 }
@@ -1813,7 +1813,7 @@ ClockTicks ototalclock;
 
 void playloop()
 {
-    Player *plr = &player[pyrn];
+    Player* plr = &player[pyrn];
 
     if (netgame) {
 // TODO    initmulti(MAXPLAYERS);
@@ -1827,6 +1827,8 @@ void playloop()
 
     while (!exit)
     {
+        handleevents();
+
         static bool frameJustDrawn;
         bool gameUpdate = false;
         double gameUpdateStartTime = timerGetHiTicks();
@@ -1843,12 +1845,14 @@ void playloop()
                 if (!frameJustDrawn)
                     break;
 
+                keytimerstuff();
+
                 frameJustDrawn = false;
 
-                int32_t oldsynctics = synctics;
-                synctics = 4;
+                //int32_t oldsynctics = synctics;
+                //synctics = 4;
                 processinput(plr);
-                synctics = oldsynctics;
+                //synctics = oldsynctics;
 
                 do
                 {
@@ -1864,33 +1868,31 @@ void playloop()
                     {
                         int32_t oldsynctics = synctics;
                         // temp
-                        synctics = kTicksPerFrame;
+                        //synctics = kTicksPerFrame;
                         processobjs(plr);
                         animateobjs(plr);
                         animatetags(plr);
                         doanimations(kTicksPerFrame);
                         dodelayitems(kTicksPerFrame);
 
-                        synctics = oldsynctics;
+                        //synctics = oldsynctics;
                     }
 
                     if ((int)(totalclock - moveClock) >= (kTicksPerFrame >> 1))
                         break;
-                } 
-                while ((totalclock - ototalclock) >= kTicksPerFrame);
+                } while ((totalclock - ototalclock) >= kTicksPerFrame);
 
                 gameUpdate = true;
 
             } while (0);
         }
 
-		keytimerstuff();
 
-		handleevents();
-
-        drawscreen(plr);
-
-        frameJustDrawn = true;
+        if (engineFPSLimit())
+        {
+            drawscreen(plr);
+            frameJustDrawn = true;
+        }    
 
         #if 0
 
@@ -1937,11 +1939,11 @@ void playloop()
         //if (engineFPSLimit()) {
             drawscreen(plr);
         //}
-            #endif
+        #endif
     }
 }
 
-void drawoverheadmap(Player *plr)
+void drawoverheadmap(Player* plr)
 {
 #if 0 // TODO
     int i, j, k, l, x1, y1, x2, y2, x3, y3, x4, y4, ox, oy, xoff, yoff;
