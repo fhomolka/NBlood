@@ -1110,7 +1110,7 @@ void processinput(Player* plr)
     }
     if (a != 0)
     {
-        plr->ang += ((a * /*synctics*/kTimerTicks) >> 4);
+        plr->ang += ((a * /*synctics*/kTicksPerFrame) >> 4);
         plr->ang = (plr->ang + 2048) & kAngleMask;
     }
 
