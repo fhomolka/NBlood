@@ -46,6 +46,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 #define TAB_CONFIG 0
 #define TAB_MESSAGES 1
+#undef POLYMER
 
 static struct
 {

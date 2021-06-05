@@ -30,6 +30,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 #include "dynamicgtk.h"
 #include "grpscan.h"
 #include "gtkpixdata.h"
+#undef POLYMER
 
 enum
 {
